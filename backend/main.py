@@ -1,17 +1,9 @@
-"""
-BharatSign — Backend API
-FastAPI server that:
-  - Receives base64 webcam frames
-  - Runs MediaPipe + classifier
-  - Returns predicted sign + confidence
-  - /tts endpoint converts text to speech (base64 audio)
-  - /signs endpoint returns all supported signs
-"""
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 import numpy as np
 import pickle
 import base64
@@ -45,12 +37,10 @@ if os.path.exists(MODEL_PATH) and os.path.exists(ENCODER_PATH):
 else:
     print("⚠️  Model not found. Run train_model.py first.")
 
-mp_hands = mp.solutions.hands
-hands_detector = mp_hands.Hands(
-    static_image_mode=True,
-    max_num_hands=1,
-    min_detection_confidence=0.7
-)
+# New mediapipe API
+base_options = python.BaseOptions(model_asset_path=os.path.join(BASE, "hand_landmarker.task"))
+options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=1)
+hand_landmarker = vision.HandLandmarker.create_from_options(options)
 
 class FrameRequest(BaseModel):
     image: str
@@ -76,7 +66,7 @@ def decode_frame(b64_image: str) -> np.ndarray:
 
 def extract_landmarks(hand_landmarks) -> list:
     coords = []
-    for lm in hand_landmarks.landmark:
+    for lm in hand_landmarks:
         coords.extend([lm.x, lm.y, lm.z])
     return coords
 
@@ -101,9 +91,10 @@ def predict(req: FrameRequest):
 
     frame = decode_frame(req.image)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hands_detector.process(rgb)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+    result = hand_landmarker.detect(mp_image)
 
-    if not result.multi_hand_landmarks:
+    if not result.hand_landmarks:
         return PredictResponse(
             sign="",
             confidence=0.0,
@@ -111,7 +102,7 @@ def predict(req: FrameRequest):
             all_probs={}
         )
 
-    landmarks = extract_landmarks(result.multi_hand_landmarks[0])
+    landmarks = extract_landmarks(result.hand_landmarks[0])
     X = np.array(landmarks).reshape(1, -1)
 
     probs = model.predict_proba(X)[0]

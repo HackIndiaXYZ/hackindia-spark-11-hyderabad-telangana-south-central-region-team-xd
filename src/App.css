@@ -1,0 +1,140 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f0;
+  min-height: 100vh;
+}
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.header {
+  display: flex; align-items: center; gap: 24px;
+  padding: 16px 32px;
+  background: #111118;
+  border-bottom: 1px solid #222;
+  flex-wrap: wrap;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 2rem; }
+.logo-text { font-size: 1.5rem; font-weight: 800; color: #00e5a0; letter-spacing: -0.5px; }
+.logo-sub { font-size: 0.75rem; color: #666; margin-left: 4px; }
+
+.mode-toggle { display: flex; background: #1a1a2e; border-radius: 10px; padding: 4px; gap: 4px; margin-left: auto; }
+.mode-toggle button {
+  padding: 8px 20px; border: none; border-radius: 8px;
+  background: transparent; color: #888; cursor: pointer;
+  font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+}
+.mode-toggle button.active { background: #00e5a0; color: #000; }
+
+.lang-select {
+  padding: 8px 12px; background: #1a1a2e; border: 1px solid #333;
+  border-radius: 8px; color: #f0f0f0; cursor: pointer; font-size: 0.85rem;
+}
+
+.main { flex: 1; padding: 24px 32px; }
+
+.sign2text { display: grid; grid-template-columns: 1fr 280px; grid-template-rows: auto auto; gap: 20px; }
+
+.video-container {
+  position: relative; background: #111; border-radius: 16px;
+  overflow: hidden; aspect-ratio: 4/3;
+  border: 2px solid #222; grid-row: 1 / 3;
+}
+.video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.video-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; background: rgba(0,0,0,0.6); color: #888; font-size: 1.1rem;
+}
+.hand-badge {
+  position: absolute; top: 12px; left: 12px; padding: 6px 14px;
+  background: #00e5a0; color: #000; border-radius: 20px; font-weight: 700; font-size: 0.8rem;
+}
+.hand-badge.no-hand { background: #ff6b6b; color: #fff; }
+
+.prediction-panel {
+  background: #111118; border: 1px solid #222; border-radius: 16px;
+  padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.current-sign { text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.sign-emoji { font-size: 3.5rem; }
+.sign-word { font-size: 2rem; font-weight: 800; color: #00e5a0; }
+.confidence { font-size: 0.8rem; color: #888; }
+.idle-text { color: #555; font-size: 1rem; }
+
+.conf-bar { width: 100%; height: 6px; background: #222; border-radius: 3px; }
+.conf-fill { height: 100%; background: #00e5a0; border-radius: 3px; transition: width 0.3s; }
+
+.start-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 12px;
+  font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.2s;
+}
+.start-btn.start { background: #00e5a0; color: #000; }
+.start-btn.stop { background: #ff6b6b; color: #fff; }
+.start-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.sentence-panel {
+  background: #111118; border: 1px solid #222; border-radius: 16px; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px; grid-column: 2;
+}
+.sentence-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #00e5a0; }
+.clear-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+.clear-btn:hover { color: #ff6b6b; border-color: #ff6b6b; }
+
+.sentence-display {
+  flex: 1; min-height: 80px; background: #0a0a0f; border-radius: 10px;
+  padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start;
+}
+.placeholder { color: #444; font-size: 0.85rem; }
+.word-chip {
+  background: #1a1a2e; border: 1px solid #00e5a033;
+  padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: #00e5a0;
+}
+
+.sentence-actions { display: flex; gap: 8px; }
+.speak-btn {
+  flex: 1; padding: 10px; background: #6c63ff; border: none;
+  border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; font-size: 0.85rem;
+}
+.speak-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.undo-btn {
+  padding: 10px 14px; background: #222; border: none;
+  border-radius: 10px; color: #888; cursor: pointer; font-size: 0.85rem;
+}
+.undo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.text2sign { display: flex; flex-direction: column; gap: 24px; max-width: 900px; margin: 0 auto; }
+.text-input-panel { text-align: center; }
+.text-input-panel h2 { font-size: 1.5rem; color: #00e5a0; margin-bottom: 16px; }
+.text-input {
+  width: 100%; padding: 16px 20px; background: #111118; border: 2px solid #333;
+  border-radius: 12px; color: #f0f0f0; font-size: 1.1rem; outline: none;
+}
+.text-input:focus { border-color: #00e5a0; }
+.hint { color: #555; font-size: 0.85rem; margin-top: 8px; }
+
+.signs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; }
+.sign-card {
+  background: #111118; border: 1px solid #222; border-radius: 14px;
+  padding: 20px 12px; text-align: center; transition: all 0.2s;
+}
+.sign-card:hover { border-color: #00e5a0; transform: translateY(-2px); }
+.sign-card.matched { border-color: #00e5a044; }
+.sign-card.unknown { border-color: #ff6b6b44; opacity: 0.7; }
+.sign-card-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+.sign-card-label { font-size: 0.85rem; font-weight: 700; color: #f0f0f0; }
+.sign-card-sub { font-size: 0.7rem; color: #ff6b6b; margin-top: 4px; }
+
+.footer {
+  padding: 16px 32px; background: #111118; border-top: 1px solid #222;
+  display: flex; justify-content: space-between; font-size: 0.8rem; color: #555;
+}
+
+@media (max-width: 768px) {
+  .sign2text { grid-template-columns: 1fr; }
+  .main { padding: 16px; }
+  .header { padding: 12px 16px; }
+}
